@@ -1,24 +1,34 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ProspectProvider } from './context/ProspectContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
+import ManagerDashboard from './components/ManagerDashboard';
 import ProspectionForm from './components/ProspectionForm';
 import SimulationComponent from './components/SimulationComponent';
 import ProspectTracking from './components/ProspectTracking';
-import Dossiers from './components/Dossiers';
+import SignedContracts from './components/SignedContracts';
+import TeamManagement from './components/TeamManagement';
+import Reports from './components/Reports';
+import Settings from './components/Settings';
 import { Skeleton } from './components/Skeleton';
 
-function App() {
+// Composant principal de l'application avec gestion des rôles
+const AppContent = () => {
+  const { user, isAuthenticated, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const timerRef = useRef(null);
 
   const renderPage = () => {
+    if (loading) {
+      return <div className="p-6">Chargement...</div>;
+    }
+
     if (!isAuthenticated) {
-      return <AuthPage onLogin={() => setIsAuthenticated(true)} />;
+      return <AuthPage />;
     }
 
     if (isLoading) {
@@ -31,6 +41,11 @@ function App() {
       );
     }
 
+    // Afficher le dashboard manager pour les utilisateurs avec le rôle manager
+    if (user && user.role === 'manager' && currentPage === 'dashboard') {
+      return <ManagerDashboard />;
+    }
+
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />;
@@ -41,21 +56,17 @@ function App() {
       case 'suivi':
         return <ProspectTracking />;
       case 'dossiers':
-        return <Dossiers />;
+        return <SignedContracts />;
+      case 'equipes':
+        return <TeamManagement />;
+      case 'rapports':
+        return <Reports />;
       case 'parametres':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-deep-navy mb-6">Paramètres</h1>
-            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <p className="text-gray-600">Page de paramètres en cours de développement</p>
-            </div>
-          </div>
-        );
+        return <Settings />;
       default:
         return <Dashboard />;
     }
   };
-
 
   const _handlePageChange = useCallback((page) => {
     setIsLoading(true);
@@ -75,16 +86,28 @@ function App() {
     };
   }, []);
 
+  if (loading) {
+    return <div className="p-6">Chargement...</div>;
+  }
+
   if (!isAuthenticated) {
-    return <AuthPage onLogin={() => setIsAuthenticated(true)} />;
+    return <AuthPage />;
   }
 
   return (
     <ProspectProvider>
-      <Layout onNavigate={_handlePageChange} currentPage={currentPage}>
+      <Layout onNavigate={_handlePageChange} currentPage={currentPage} user={user}>
         {renderPage()}
       </Layout>
     </ProspectProvider>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

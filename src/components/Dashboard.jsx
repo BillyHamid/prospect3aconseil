@@ -240,10 +240,6 @@ const Dashboard = () => {
           <p className="text-gray-600 mt-2">Bonjour, Salif ! Suivez votre activité en temps réel</p>
         </div>
         <div className="flex gap-3">
-          <button className="bg-gradient-to-r from-navy-blue to-blue-600 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl flex items-center transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            <Plus size={20} className="mr-2" />
-            Nouveau prospect
-          </button>
           <button className="bg-white border border-gray-200 text-gray-700 font-medium py-3 px-4 rounded-xl flex items-center transition-all duration-200 shadow-sm hover:shadow-md">
             <Filter size={20} className="mr-2" />
             Filtres

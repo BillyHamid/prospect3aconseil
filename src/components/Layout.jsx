@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import {
   Home,
   User,
@@ -10,20 +11,33 @@ import {
   Menu,
   X,
   Bell,
-  Search
+  Search,
+  Users,
+  FileText,
+  Shield,
+  UserCheck
 } from 'lucide-react';
 
 const Layout = ({ children, onNavigate, currentPage }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, logout, hasPermission } = useAuth();
 
+  // Navigation basée sur les permissions de l'utilisateur
   const navigation = [
-    { name: 'Dashboard', key: 'dashboard', icon: Home },
-    { name: 'Prospection', key: 'prospection', icon: User },
-    { name: 'Simulateur', key: 'simulateur', icon: Calculator },
-    { name: 'Suivi', key: 'suivi', icon: BarChart3 },
-    { name: 'Dossiers', key: 'dossiers', icon: Briefcase },
-    { name: 'Paramètres', key: 'parametres', icon: Settings },
+    { name: 'Dashboard', key: 'dashboard', icon: Home, permissions: ['dashboard'] },
+    { name: 'Prospection', key: 'prospection', icon: User, permissions: ['prospection'] },
+    { name: 'Simulateur', key: 'simulateur', icon: Calculator, permissions: ['simulateur'] },
+    { name: 'Suivi', key: 'suivi', icon: BarChart3, permissions: ['suivi'] },
+    { name: 'Contrats signés', key: 'dossiers', icon: Briefcase, permissions: ['dossiers'] },
+    { name: 'Équipes', key: 'equipes', icon: Users, permissions: ['equipes'] },
+    { name: 'Rapports', key: 'rapports', icon: FileText, permissions: ['rapports'] },
+    { name: 'Paramètres', key: 'parametres', icon: Settings, permissions: ['parametres'] },
   ];
+
+  // Filtrer les éléments de navigation en fonction des permissions
+  const filteredNavigation = navigation.filter(item =>
+    !item.permissions || item.permissions.some(permission => hasPermission(permission))
+  );
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -34,6 +48,10 @@ const Layout = ({ children, onNavigate, currentPage }) => {
       onNavigate(page);
       setSidebarOpen(false); // Fermer le menu sur mobile après navigation
     }
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -54,12 +72,14 @@ const Layout = ({ children, onNavigate, currentPage }) => {
       >
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-navy-blue to-blue-700 flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-xl">3A</span>
-            </div>
+            <img
+              src="/src/assets/3ac.jpeg"
+              alt="3A Conseils Logo"
+              className="w-10 h-10 rounded-xl shadow-md object-cover"
+            />
             <div>
-              <h1 className="text-lg font-bold text-deep-navy">3A Conseils</h1>
               <p className="text-xs text-gray-500">Plateforme</p>
+              <p className="text-xs font-medium text-red-700 capitalize">{user?.role || 'Utilisateur'}</p>
             </div>
           </div>
           <button
@@ -72,7 +92,7 @@ const Layout = ({ children, onNavigate, currentPage }) => {
 
         <nav className="p-4">
           <ul className="space-y-1">
-            {navigation.map((item) => {
+            {filteredNavigation.map((item) => {
               const Icon = item.icon;
               return (
                 <li key={item.name}>
@@ -80,8 +100,8 @@ const Layout = ({ children, onNavigate, currentPage }) => {
                     onClick={() => handleNavigation(item.key)}
                     className={`flex items-center w-full p-3 rounded-xl transition-all duration-200 group ${
                       currentPage === item.key
-                        ? 'bg-gradient-to-r from-navy-blue to-blue-600 text-white shadow-md'
-                        : 'text-deep-navy hover:bg-gray-50'
+                        ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-md'
+                        : 'text-gray-800 hover:bg-gray-50'
                     }`}
                   >
                     <Icon
@@ -89,11 +109,11 @@ const Layout = ({ children, onNavigate, currentPage }) => {
                       className={`mr-3 ${
                         currentPage === item.key
                           ? 'text-white'
-                          : 'text-gray-600 group-hover:text-navy-blue'
+                          : 'text-gray-600 group-hover:text-red-600'
                       } transition-colors`}
                     />
                     <span className={`font-medium ${
-                      currentPage === item.key ? 'text-white' : 'text-deep-navy'
+                      currentPage === item.key ? 'text-white' : 'text-gray-800'
                     }`}>
                       {item.name}
                     </span>
@@ -104,8 +124,11 @@ const Layout = ({ children, onNavigate, currentPage }) => {
           </ul>
 
           <div className="mt-8 pt-6 border-t border-gray-100">
-            <button className="flex items-center w-full p-3 text-deep-navy rounded-xl hover:bg-gray-50 transition-colors duration-200 group">
-              <LogOut size={20} className="mr-3 text-gray-600 group-hover:text-navy-blue transition-colors" />
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full p-3 text-gray-800 rounded-xl hover:bg-gray-50 transition-colors duration-200 group"
+            >
+              <LogOut size={20} className="mr-3 text-gray-600 group-hover:text-red-600 transition-colors" />
               <span className="font-medium">Déconnexion</span>
             </button>
           </div>
@@ -119,12 +142,12 @@ const Layout = ({ children, onNavigate, currentPage }) => {
           <div className="flex items-center">
             <button
               onClick={toggleSidebar}
-              className="lg:hidden mr-4 text-gray-600 hover:text-deep-navy p-2 rounded-lg hover:bg-gray-100"
+              className="lg:hidden mr-4 text-gray-600 hover:text-red-700 p-2 rounded-lg hover:bg-gray-100"
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-semibold text-deep-navy">
-              {navigation.find(item => item.key === currentPage)?.name || 'Dashboard'}
+            <h1 className="text-xl font-semibold text-red-700">
+              {filteredNavigation.find(item => item.key === currentPage)?.name || 'Dashboard'}
             </h1>
           </div>
 
@@ -134,16 +157,23 @@ const Layout = ({ children, onNavigate, currentPage }) => {
               <input
                 type="text"
                 placeholder="Rechercher..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors w-64"
               />
             </div>
-            <button className="relative p-2 text-gray-600 hover:text-navy-blue hover:bg-gray-100 rounded-lg transition-colors">
+            <button className="relative p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell size={20} />
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
             </button>
             <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-navy-blue to-blue-600 flex items-center justify-center shadow-md cursor-pointer">
-                <span className="text-white font-medium text-sm">SK</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-600 to-red-700 flex items-center justify-center shadow-md cursor-pointer">
+                <span className="text-white font-medium text-sm">{user?.name?.charAt(0) || 'U'}</span>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border-2 border-white flex items-center justify-center">
+                {user?.role === 'manager' ? (
+                  <Shield size={12} className="text-blue-500" />
+                ) : (
+                  <UserCheck size={12} className="text-green-500" />
+                )}
               </div>
             </div>
           </div>

@@ -28,6 +28,8 @@ const ProspectionForm = () => {
     appointmentDate: '',
     location: null
   });
+  const [showCustomAddress, setShowCustomAddress] = useState(false);
+  const [locationInfo, setLocationInfo] = useState(null);
 
   const { addProspect } = useProspectContext();
 
@@ -83,6 +85,55 @@ const ProspectionForm = () => {
     }));
   };
 
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("La géolocalisation n'est pas supportée par votre navigateur");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        const locationData = {
+          latitude,
+          longitude,
+          accuracy,
+          timestamp: new Date().toISOString()
+        };
+
+        setLocationInfo(locationData);
+        setFormData(prev => ({
+          ...prev,
+          location: `Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}`
+        }));
+
+        alert("Position actuelle récupérée avec succès !");
+      },
+      (error) => {
+        console.error("Erreur de géolocalisation:", error);
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert("L'utilisateur a refusé la demande de géolocalisation.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("La position de l'utilisateur n'est pas disponible.");
+            break;
+          case error.TIMEOUT:
+            alert("La demande de géolocalisation a expiré.");
+            break;
+          default:
+            alert("Une erreur inconnue s'est produite.");
+            break;
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
+
   const getCurrentStepIcon = () => {
     const currentStepData = steps.find(step => step.id === currentStep);
     return currentStepData ? currentStepData.icon : User;
@@ -96,7 +147,7 @@ const ProspectionForm = () => {
     } else if (stepId === 3) {
       return formData.insuranceType;
     } else if (stepId === 4) {
-      return formData.budget && formData.needs.length > 0;
+      return formData.budget; // On rend le budget obligatoire mais pas les besoins
     } else if (stepId === 5) {
       return formData.appointmentDate;
     }
@@ -117,8 +168,10 @@ const ProspectionForm = () => {
       email: formData.email,
       insuranceType: formData.insuranceType,
       budget: budgetFCFA,
-      needs: formData.needs,
-      appointmentDate: formData.appointmentDate
+      needs: formData.needs || [], // S'assurer que needs est un tableau
+      appointmentDate: formData.appointmentDate,
+      location: formData.location, // Inclure les informations de localisation
+      locationInfo: locationInfo // Inclure les détails de localisation si disponibles
     };
 
     // Ajouter le prospect via le contexte
@@ -137,6 +190,10 @@ const ProspectionForm = () => {
       appointmentDate: '',
       location: null
     });
+
+    // Réinitialiser les états de localisation
+    setShowCustomAddress(false);
+    setLocationInfo(null);
 
     // Réinitialiser l'étape
     setCurrentStep(1);
@@ -405,6 +462,7 @@ const ProspectionForm = () => {
                   <div className="flex space-x-4">
                     <button
                       type="button"
+                      onClick={getCurrentLocation}
                       className="flex-1 p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 transition-colors flex items-center justify-center"
                     >
                       <MapPin size={20} className="mr-2" />
@@ -412,12 +470,39 @@ const ProspectionForm = () => {
                     </button>
                     <button
                       type="button"
+                      onClick={() => setShowCustomAddress(!showCustomAddress)}
                       className="flex-1 p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 transition-colors flex items-center justify-center"
                     >
                       <Map size={20} className="mr-2" />
                       Adresse personnalisée
                     </button>
                   </div>
+
+                  {showCustomAddress && (
+                    <div className="mt-4">
+                      <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+                        Adresse du rendez-vous
+                      </label>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location || ''}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                        placeholder="Entrez l'adresse du rendez-vous"
+                      />
+                    </div>
+                  )}
+
+                  {locationInfo && (
+                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <h4 className="font-medium text-blue-800 mb-2">Position actuelle capturée :</h4>
+                      <p className="text-sm text-gray-700">Latitude: {locationInfo.latitude.toFixed(6)}</p>
+                      <p className="text-sm text-gray-700">Longitude: {locationInfo.longitude.toFixed(6)}</p>
+                      <p className="text-sm text-gray-700 mt-1">Précision: {locationInfo.accuracy} mètres</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

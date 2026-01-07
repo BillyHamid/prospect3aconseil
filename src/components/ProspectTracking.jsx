@@ -9,14 +9,17 @@ import {
   Calendar,
   Edit,
   Trash2,
-  Eye
+  Eye,
+  X
 } from 'lucide-react';
 import { useProspectContext } from '../context/ProspectContext';
 
 const ProspectTracking = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
-  const { prospects, deleteProspect } = useProspectContext();
+  const [filterType, setFilterType] = useState('all');
+  const [editingProspect, setEditingProspect] = useState(null);
+  const { prospects, deleteProspect, updateProspect } = useProspectContext();
 
   const statusConfig = {
     chaud: { label: 'Chaud', color: 'bg-orange-100 text-orange-800', dot: 'bg-orange-500' },
@@ -25,11 +28,46 @@ const ProspectTracking = () => {
     perdu: { label: 'Perdu', color: 'bg-red-100 text-red-800', dot: 'bg-red-500' }
   };
 
+  const statusCriteria = {
+    'a_relancer': [
+      'Premier contact effectué',
+      'Intérêt modéré exprimé',
+      'En attente de réponse',
+      'Besoin de relance'
+    ],
+    chaud: [
+      'Fort intérêt exprimé',
+      'Demande de devis détaillé',
+      'Prêt à signer rapidement',
+      'Budget confirmé',
+      'Décision imminente'
+    ],
+    'contrat_signe': [
+      'Contrat signé',
+      'Paiement effectué',
+      'Démarrage du service'
+    ],
+    perdu: [
+      'Choix d\'un concurrent',
+      'Plus de besoin',
+      'Budget insuffisant',
+      'Délai trop long'
+    ]
+  };
+
+  const insuranceTypes = [
+    { value: 'auto', label: 'Auto' },
+    { value: 'moto', label: 'Moto' },
+    { value: 'sante', label: 'Santé' },
+    { value: 'habitation', label: 'Habitation' }
+  ];
+
   const filteredProspects = prospects.filter(prospect => {
     const matchesSearch = prospect.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          prospect.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === 'all' || prospect.status === filterStatus;
-    return matchesSearch && matchesFilter;
+    const matchesStatusFilter = filterStatus === 'all' || prospect.status === filterStatus;
+    const matchesTypeFilter = filterType === 'all' || prospect.insuranceType === filterType;
+    return matchesSearch && matchesStatusFilter && matchesTypeFilter;
   });
 
   const formatDate = (dateString) => {
@@ -41,6 +79,35 @@ const ProspectTracking = () => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce prospect ?')) {
       deleteProspect(id);
     }
+  };
+
+  const handleUpdateProspect = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updatedProspect = {
+      ...editingProspect,
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      phone: formData.get('phone'),
+      email: formData.get('email'),
+      insuranceType: formData.get('insuranceType'),
+      budget: formData.get('budget'),
+      notes: formData.get('notes'),
+      status: formData.get('status'),
+      lastContact: formData.get('lastContact'),
+      nextAppointment: formData.get('nextAppointment') || null,
+      name: `${formData.get('firstName')} ${formData.get('lastName')}`
+    };
+
+    updateProspect(updatedProspect);
+    setEditingProspect(null);
+  };
+
+  const handleInputChange = (field, value) => {
+    setEditingProspect(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
@@ -87,6 +154,16 @@ const ProspectTracking = () => {
               <option value="a_relancer">À relancer</option>
               <option value="contrat_signe">Contrat signé</option>
               <option value="perdu">Perdu</option>
+            </select>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+            >
+              <option value="all">Tous les types</option>
+              {insuranceTypes.map(type => (
+                <option key={type.value} value={type.value}>{type.label}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -152,7 +229,10 @@ const ProspectTracking = () => {
                       <button className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded">
                         <Eye size={16} />
                       </button>
-                      <button className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded">
+                      <button
+                        className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded"
+                        onClick={() => setEditingProspect(prospect)}
+                      >
                         <Edit size={16} />
                       </button>
                       <button
@@ -256,6 +336,177 @@ const ProspectTracking = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal for editing all prospect fields */}
+      {editingProspect && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold text-deep-navy">Modifier le prospect</h3>
+                <button
+                  onClick={() => setEditingProspect(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateProspect} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      defaultValue={editingProspect.name?.split(' ')[0] || editingProspect.firstName}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      defaultValue={editingProspect.name?.split(' ').slice(1).join(' ') || editingProspect.lastName}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                    <input
+                      type="text"
+                      name="phone"
+                      defaultValue={editingProspect.phone}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      defaultValue={editingProspect.email}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Type d'assurance</label>
+                    <select
+                      name="insuranceType"
+                      defaultValue={editingProspect.insuranceType}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('insuranceType', e.target.value)}
+                    >
+                      {insuranceTypes.map(type => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Budget (FCFA)</label>
+                    <input
+                      type="text"
+                      name="budget"
+                      defaultValue={editingProspect.budget}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('budget', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Dernier contact</label>
+                    <input
+                      type="date"
+                      name="lastContact"
+                      defaultValue={editingProspect.lastContact.split('T')[0]}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('lastContact', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Prochain RDV</label>
+                    <input
+                      type="date"
+                      name="nextAppointment"
+                      defaultValue={editingProspect.nextAppointment ? editingProspect.nextAppointment.split('T')[0] : ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                      onChange={(e) => handleInputChange('nextAppointment', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                  <select
+                    name="status"
+                    defaultValue={editingProspect.status}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                    onChange={(e) => handleInputChange('status', e.target.value)}
+                  >
+                    {Object.entries(statusConfig).map(([key, config]) => (
+                      <option key={key} value={key}>{config.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    name="notes"
+                    defaultValue={editingProspect.notes}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-blue focus:border-accent-blue transition-colors"
+                    onChange={(e) => handleInputChange('notes', e.target.value)}
+                  ></textarea>
+                </div>
+
+                <div className="mt-6">
+                  <h4 className="text-md font-semibold text-deep-navy mb-3">Critères pour le statut sélectionné :</h4>
+                  <div className="border rounded-lg p-4 bg-gray-50">
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      {statusCriteria[editingProspect.status]?.map((criterion, idx) => (
+                        <li key={idx} className="flex items-start">
+                          <span className="text-navy-blue mr-2">•</span>
+                          <span>{criterion}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setEditingProspect(null)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-navy-blue text-white rounded-lg hover:bg-blue-900"
+                  >
+                    Enregistrer les modifications
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

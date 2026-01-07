@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import dataService from '../services/dataService';
 
 // Définir les actions
 const ADD_PROSPECT = 'ADD_PROSPECT';
@@ -42,81 +43,22 @@ const prospectReducer = (state, action) => {
 // Fournisseur de contexte
 export const ProspectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(prospectReducer, {
-    prospects: [
-      {
-        id: 1,
-        name: 'Yacouba Diallo',
-        phone: '+226 70 12 34 56',
-        email: 'yacouba.diallo@email.bf',
-        insuranceType: 'Auto',
-        status: 'chaud',
-        lastContact: '2026-01-03',
-        nextAppointment: '2026-01-05',
-        budget: '60,000 FCFA/mois',
-        notes: 'Intéressé par la formule complète'
-      },
-      {
-        id: 2,
-        name: 'Aminata Traoré',
-        phone: '+226 78 98 76 54',
-        email: 'aminata.traore@email.bf',
-        insuranceType: 'Habitation',
-        status: 'a_relancer',
-        lastContact: '2025-12-28',
-        nextAppointment: '2026-01-10',
-        budget: '42,500 FCFA/mois',
-        notes: 'Besoin de réfléchir'
-      },
-      {
-        id: 3,
-        name: 'Salif Kouyaté',
-        phone: '+226 76 11 22 33',
-        email: 'salif.kouyate@email.bf',
-        insuranceType: 'Santé',
-        status: 'contrat_signe',
-        lastContact: '2026-01-04',
-        nextAppointment: null,
-        budget: '47,500 FCFA/mois',
-        notes: 'Contrat signé, en attente de mise en service'
-      },
-      {
-        id: 4,
-        name: 'Fatoumata Sissoko',
-        phone: '+226 76 55 44 33',
-        email: 'fatoumata.sissoko@email.bf',
-        insuranceType: 'Moto',
-        status: 'perdu',
-        lastContact: '2025-12-20',
-        nextAppointment: null,
-        budget: '37,500 FCFA/mois',
-        notes: 'A choisi un concurrent'
-      },
-      {
-        id: 5,
-        name: 'Issa Ouattara',
-        phone: '+226 77 33 44 55',
-        email: 'issa.ouattara@email.bf',
-        insuranceType: 'Auto',
-        status: 'a_relancer',
-        lastContact: '2026-01-02',
-        nextAppointment: '2026-01-08',
-        budget: '55,000 FCFA/mois',
-        notes: 'Très intéressé, en attente de documents'
-      },
-      {
-        id: 6,
-        name: 'Mariam Kaboré',
-        phone: '+226 76 77 88 99',
-        email: 'mariam.kabore@email.bf',
-        insuranceType: 'Habitation',
-        status: 'chaud',
-        lastContact: '2026-01-04',
-        nextAppointment: '2026-01-06',
-        budget: '45,000 FCFA/mois',
-        notes: 'Rendez-vous confirmé'
-      }
-    ]
+    prospects: []
   });
+
+  // Charger les prospects depuis le service de données au montage
+  useEffect(() => {
+    const loadProspects = async () => {
+      try {
+        const prospects = dataService.getProspects();
+        dispatch({ type: SET_PROSPECTS, payload: prospects });
+      } catch (error) {
+        console.error('Erreur lors du chargement des prospects:', error);
+      }
+    };
+
+    loadProspects();
+  }, []);
 
   const addProspect = (prospectData) => {
     const newProspect = {
@@ -131,15 +73,24 @@ export const ProspectProvider = ({ children }) => {
       budget: `${prospectData.budget} FCFA/mois`,
       notes: `Besoin: ${prospectData.needs.join(', ')}`
     };
-    
+
+    // Sauvegarder dans le service de données
+    dataService.addProspect(newProspect);
+
     dispatch({ type: ADD_PROSPECT, payload: newProspect });
   };
 
   const updateProspect = (prospect) => {
+    // Mettre à jour dans le service de données
+    dataService.updateProspect(prospect.id, prospect);
+
     dispatch({ type: UPDATE_PROSPECT, payload: prospect });
   };
 
   const deleteProspect = (id) => {
+    // Supprimer du service de données
+    dataService.deleteProspect(id);
+
     dispatch({ type: DELETE_PROSPECT, payload: id });
   };
 
