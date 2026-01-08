@@ -117,75 +117,75 @@ class DataService {
       prospects: [
         {
           id: 1,
-          name: 'Yacouba Diallo',
+          name: 'Deborah BAZIE',
           phone: '+226 70 12 34 56',
-          email: 'yacouba.diallo@email.bf',
+          email: 'deborah@3aconseils.com',
           insuranceType: 'Auto',
           status: 'chaud',
           lastContact: '2026-01-03',
           nextAppointment: '2026-01-05',
           budget: '60,000 FCFA/mois',
-          notes: 'Intéressé par la formule complète'
+          notes: 'Agent Commercial'
         },
         {
           id: 2,
-          name: 'Aminata Traoré',
+          name: 'TO Alida',
           phone: '+226 78 98 76 54',
-          email: 'aminata.traore@email.bf',
+          email: 'alida@3aconseils.com',
           insuranceType: 'Habitation',
           status: 'a_relancer',
           lastContact: '2025-12-28',
           nextAppointment: '2026-01-10',
           budget: '42,500 FCFA/mois',
-          notes: 'Besoin de réfléchir'
+          notes: 'Gérante'
         },
         {
           id: 3,
-          name: 'Salif Kouyaté',
+          name: 'Prospect Test',
           phone: '+226 76 11 22 33',
-          email: 'salif.kouyate@email.bf',
+          email: 'test@prospect.bf',
           insuranceType: 'Santé',
           status: 'contrat_signe',
           lastContact: '2026-01-04',
           nextAppointment: null,
           budget: '47,500 FCFA/mois',
-          notes: 'Contrat signé, en attente de mise en service'
+          notes: 'Prospect de test'
         },
         {
           id: 4,
-          name: 'Fatoumata Sissoko',
+          name: 'Client Exemple',
           phone: '+226 76 55 44 33',
-          email: 'fatoumata.sissoko@email.bf',
+          email: 'client@exemple.bf',
           insuranceType: 'Moto',
           status: 'perdu',
           lastContact: '2025-12-20',
           nextAppointment: null,
           budget: '37,500 FCFA/mois',
-          notes: 'A choisi un concurrent'
+          notes: 'Client exemple'
         },
         {
           id: 5,
-          name: 'Issa Ouattara',
+          name: 'Prospect Important',
           phone: '+226 77 33 44 55',
-          email: 'issa.ouattara@email.bf',
+          email: 'important@prospect.bf',
           insuranceType: 'Auto',
           status: 'a_relancer',
           lastContact: '2026-01-02',
           nextAppointment: '2026-01-08',
           budget: '55,000 FCFA/mois',
-          notes: 'Très intéressé, en attente de documents'
+          notes: 'Prospect prioritaire'
         },
         {
           id: 6,
-          name: 'Mariam Kaboré',
+          name: 'Client Régulier',
           phone: '+226 76 77 88 99',
-          email: 'mariam.kabore@email.bf',
+          email: 'regulier@client.bf',
           insuranceType: 'Habitation',
           status: 'chaud',
           lastContact: '2026-01-04',
           nextAppointment: '2026-01-06',
           budget: '45,000 FCFA/mois',
-          notes: 'Rendez-vous confirmé'
+          notes: 'Client fidèle'
         }
       ]
     };

@@ -27,8 +27,8 @@ const TeamManagement = () => {
   const [agents, setAgents] = useState([
     {
       id: 1,
-      name: 'Yacouba Diallo',
-      email: 'yacouba@3aconseils.com',
+      name: 'Deborah BAZIE',
+      email: 'deborah@3aconseils.com',
       role: 'Agent Commercial',
       status: 'Actif',
       performance: 92,
@@ -42,9 +42,9 @@ const TeamManagement = () => {
     },
     {
       id: 2,
-      name: 'Aminata Traoré',
-      email: 'aminata@3aconseils.com',
-      role: 'Agent Commercial',
+      name: 'TO Alida',
+      email: 'alida@3aconseils.com',
+      role: 'Gérante',
       status: 'Actif',
       performance: 87,
       targets: 1100000,
@@ -54,51 +54,6 @@ const TeamManagement = () => {
       avgValue: '163,000 FCFA',
       lastActivity: '2026-01-07',
       color: 'bg-blue-500'
-    },
-    {
-      id: 3,
-      name: 'Salif Kouyaté',
-      email: 'salif@3aconseils.com',
-      role: 'Agent Commercial',
-      status: 'Actif',
-      performance: 78,
-      targets: 950000,
-      achieved: 740000,
-      leads: 15,
-      contracts: 4,
-      avgValue: '185,000 FCFA',
-      lastActivity: '2026-01-06',
-      color: 'bg-yellow-500'
-    },
-    {
-      id: 4,
-      name: 'Fatoumata Sissoko',
-      email: 'fatoumata@3aconseils.com',
-      role: 'Agent Commercial',
-      status: 'Actif',
-      performance: 95,
-      targets: 1300000,
-      achieved: 1240000,
-      leads: 28,
-      contracts: 10,
-      avgValue: '124,000 FCFA',
-      lastActivity: '2026-01-07',
-      color: 'bg-green-500'
-    },
-    {
-      id: 5,
-      name: 'Issa Ouattara',
-      email: 'issa@3aconseils.com',
-      role: 'Agent Commercial',
-      status: 'En probation',
-      performance: 65,
-      targets: 800000,
-      achieved: 520000,
-      leads: 12,
-      contracts: 2,
-      avgValue: '260,000 FCFA',
-      lastActivity: '2026-01-05',
-      color: 'bg-red-500'
     }
   ]);
 

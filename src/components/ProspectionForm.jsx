@@ -141,13 +141,13 @@ const ProspectionForm = () => {
 
   const isStepComplete = (stepId) => {
     if (stepId === 1) {
-      return formData.firstName && formData.lastName;
+      return formData.firstName.trim() && formData.lastName.trim();
     } else if (stepId === 2) {
-      return formData.phone && formData.email;
+      return formData.phone.trim() && formData.email.trim();
     } else if (stepId === 3) {
       return formData.insuranceType;
     } else if (stepId === 4) {
-      return formData.budget; // On rend le budget obligatoire mais pas les besoins
+      return formData.budget && parseInt(formData.budget) > 0; // S'assurer que le budget est un nombre positif
     } else if (stepId === 5) {
       return formData.appointmentDate;
     }
@@ -496,11 +496,27 @@ const ProspectionForm = () => {
                   )}
 
                   {locationInfo && (
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <h4 className="font-medium text-blue-800 mb-2">Position actuelle capturée :</h4>
-                      <p className="text-sm text-gray-700">Latitude: {locationInfo.latitude.toFixed(6)}</p>
-                      <p className="text-sm text-gray-700">Longitude: {locationInfo.longitude.toFixed(6)}</p>
-                      <p className="text-sm text-gray-700 mt-1">Précision: {locationInfo.accuracy} mètres</p>
+                    <div className="mt-4">
+                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 className="font-medium text-blue-800 mb-2">Position actuelle capturée :</h4>
+                        <p className="text-sm text-gray-700">Latitude: {locationInfo.latitude.toFixed(6)}</p>
+                        <p className="text-sm text-gray-700">Longitude: {locationInfo.longitude.toFixed(6)}</p>
+                        <p className="text-sm text-gray-700 mt-1">Précision: {locationInfo.accuracy} mètres</p>
+                      </div>
+
+                      {/* Carte OpenStreetMap intégrée */}
+                      <div className="mt-4">
+                        <h4 className="font-medium text-blue-800 mb-2">Emplacement sur la carte :</h4>
+                        <iframe
+                          width="100%"
+                          height="250"
+                          style={{ border: 0, borderRadius: '0.5rem' }}
+                          loading="lazy"
+                          allowFullScreen
+                          referrerPolicy="no-referrer-when-downgrade"
+                          src={`https://www.openstreetmap.org/export/embed.html?bbox=${locationInfo.longitude-0.01}%2C${locationInfo.latitude-0.01}%2C${locationInfo.longitude+0.01}%2C${locationInfo.latitude+0.01}&layer=mapnik&marker=${locationInfo.latitude}%2C${locationInfo.longitude}`}
+                        ></iframe>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -532,7 +548,7 @@ const ProspectionForm = () => {
                 className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
                   isStepComplete(currentStep)
                     ? 'bg-navy-blue text-white hover:bg-blue-900'
-                    : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 Suivant

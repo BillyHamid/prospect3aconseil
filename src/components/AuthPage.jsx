@@ -261,14 +261,6 @@ const AuthPage = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleQuickLogin('manager')}
-                        className="w-full mt-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
-                      >
-                        <Users size={20} className="mr-2" />
-                        Connexion rapide (Manager)
-                      </button>
-                      <button
-                        type="button"
                         onClick={() => handleQuickLogin('admin')}
                         className="w-full mt-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                       >

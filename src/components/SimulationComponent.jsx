@@ -211,14 +211,14 @@ const SimulationComponent = () => {
     <div className="max-w-7xl mx-auto">
       <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl border border-gray-100 shadow-xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-navy-blue to-blue-700 p-8 text-white">
+        <div className="bg-gradient-to-r from-red-600 to-red-700 p-8 text-white">
           <div className="flex items-center mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white bg-opacity-20 flex items-center justify-center mr-4">
               <Shield size={32} className="text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold">Simulateur d'assurance</h1>
-              <p className="text-blue-100 mt-1">Comparez les offres de toutes les assurances du Burkina Faso</p>
+              <p className="text-red-100 mt-1">Comparez les offres de toutes les assurances du Burkina Faso</p>
             </div>
           </div>
         </div>

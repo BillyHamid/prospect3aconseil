@@ -73,7 +73,7 @@ const Layout = ({ children, onNavigate, currentPage }) => {
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <img
-              src="/src/assets/3ac.jpeg"
+              src="/3ac.jpeg"
               alt="3A Conseils Logo"
               className="w-10 h-10 rounded-xl shadow-md object-cover"
             />
@@ -142,11 +142,11 @@ const Layout = ({ children, onNavigate, currentPage }) => {
           <div className="flex items-center">
             <button
               onClick={toggleSidebar}
-              className="lg:hidden mr-4 text-gray-600 hover:text-red-700 p-2 rounded-lg hover:bg-gray-100"
+              className="lg:hidden mr-4 text-gray-600 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100"
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-xl font-semibold text-red-700">
+            <h1 className="text-xl font-semibold text-gray-800">
               {filteredNavigation.find(item => item.key === currentPage)?.name || 'Dashboard'}
             </h1>
           </div>
@@ -160,7 +160,7 @@ const Layout = ({ children, onNavigate, currentPage }) => {
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors w-64"
               />
             </div>
-            <button className="relative p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors">
+            <button className="relative p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell size={20} />
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
             </button>
@@ -169,7 +169,7 @@ const Layout = ({ children, onNavigate, currentPage }) => {
                 <span className="text-white font-medium text-sm">{user?.name?.charAt(0) || 'U'}</span>
               </div>
               <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border-2 border-white flex items-center justify-center">
-                {user?.role === 'manager' ? (
+                {user?.role === 'admin' ? (
                   <Shield size={12} className="text-blue-500" />
                 ) : (
                   <UserCheck size={12} className="text-green-500" />

@@ -41,8 +41,8 @@ const AppContent = () => {
       );
     }
 
-    // Afficher le dashboard manager pour les utilisateurs avec le rôle manager
-    if (user && user.role === 'manager' && currentPage === 'dashboard') {
+    // Afficher le dashboard manager pour les utilisateurs avec le rôle admin
+    if (user && user.role === 'admin' && currentPage === 'dashboard') {
       return <ManagerDashboard />;
     }
 

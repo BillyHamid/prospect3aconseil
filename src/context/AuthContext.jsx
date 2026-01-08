@@ -51,20 +51,12 @@ export const AuthProvider = ({ children }) => {
         role: 'agent',
         permissions: ['prospection', 'suivi', 'simulateur', 'dossiers']
       };
-    } else if (email === 'manager@3aconseils.com' && password === 'Manager1234!') {
-      userData = {
-        id: 3,
-        email: 'manager@3aconseils.com',
-        name: 'Manager Test',
-        role: 'manager',
-        permissions: ['dashboard', 'prospection', 'suivi', 'simulateur', 'dossiers', 'equipes', 'rapports', 'parametres']
-      };
     } else if (email === 'admin@3aconseils.com' && password === 'Admin1234!') {
       userData = {
         id: 4,
         email: 'admin@3aconseils.com',
         name: 'Admin Test',
-        role: 'manager',
+        role: 'admin',
         permissions: ['dashboard', 'prospection', 'suivi', 'simulateur', 'dossiers', 'equipes', 'rapports', 'parametres', 'admin']
       };
     }
