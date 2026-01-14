@@ -31,6 +31,7 @@ const Layout = ({ children, onNavigate, currentPage }) => {
     { name: 'Contrats signés', key: 'dossiers', icon: Briefcase, permissions: ['dossiers'] },
     { name: 'Équipes', key: 'equipes', icon: Users, permissions: ['equipes'] },
     { name: 'Rapports', key: 'rapports', icon: FileText, permissions: ['rapports'] },
+    { name: 'Assurance', key: 'assurances', icon: Shield, permissions: ['assurances'] },
     { name: 'Paramètres', key: 'parametres', icon: Settings, permissions: ['parametres'] },
   ];
 

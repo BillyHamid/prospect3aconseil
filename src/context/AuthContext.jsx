@@ -21,6 +21,20 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
+
+        // Vérifier si le compte est expiré (pour les comptes de test)
+        if (parsedUser.expirationDate) {
+          const now = new Date();
+          const expiration = new Date(parsedUser.expirationDate);
+          if (now > expiration) {
+            // Le compte est expiré, on le déconnecte
+            localStorage.removeItem('user');
+            setIsAuthenticated(false);
+            setUser(null);
+            return;
+          }
+        }
+
         setUser(parsedUser);
         setIsAuthenticated(true);
       } catch (error) {
@@ -35,13 +49,36 @@ export const AuthProvider = ({ children }) => {
     // Vérification des identifiants de test
     let userData = null;
 
-    if (email === 'test@3aconseils.com' && password === 'Test1234!') {
+    // Comptes de test avec expiration
+    if (email === 'test1@gmail.com' && password === 'boxtest') {
+      const now = new Date();
+      const expiration = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // 2 jours
+      userData = {
+        id: 5,
+        email: 'test1@gmail.com',
+        name: 'Client Test 1',
+        role: 'agent',
+        permissions: ['prospection', 'suivi', 'simulateur', 'dossiers', 'assurances'],
+        expirationDate: expiration.toISOString()
+      };
+    } else if (email === 'test2@gmail.com' && password === 'boxtest') {
+      const now = new Date();
+      const expiration = new Date(now.getTime() + 30 * 60 * 1000); // 30 minutes
+      userData = {
+        id: 6,
+        email: 'test2@gmail.com',
+        name: 'Client Test 2',
+        role: 'admin',
+        permissions: ['dashboard', 'prospection', 'suivi', 'simulateur', 'dossiers', 'equipes', 'rapports', 'parametres', 'assurances', 'admin'],
+        expirationDate: expiration.toISOString()
+      };
+    } else if (email === 'test@3aconseils.com' && password === 'Test1234!') {
       userData = {
         id: 1,
         email: 'test@3aconseils.com',
         name: 'Agent Test',
         role: 'agent',
-        permissions: ['prospection', 'suivi', 'simulateur', 'dossiers']
+        permissions: ['prospection', 'suivi', 'simulateur', 'dossiers', 'assurances']
       };
     } else if (email === 'demo@3aconseils.com' && password === 'Demo1234!') {
       userData = {
@@ -49,7 +86,7 @@ export const AuthProvider = ({ children }) => {
         email: 'demo@3aconseils.com',
         name: 'Agent Demo',
         role: 'agent',
-        permissions: ['prospection', 'suivi', 'simulateur', 'dossiers']
+        permissions: ['prospection', 'suivi', 'simulateur', 'dossiers', 'assurances']
       };
     } else if (email === 'admin@3aconseils.com' && password === 'Admin1234!') {
       userData = {
@@ -57,11 +94,20 @@ export const AuthProvider = ({ children }) => {
         email: 'admin@3aconseils.com',
         name: 'Admin Test',
         role: 'admin',
-        permissions: ['dashboard', 'prospection', 'suivi', 'simulateur', 'dossiers', 'equipes', 'rapports', 'parametres', 'admin']
+        permissions: ['dashboard', 'prospection', 'suivi', 'simulateur', 'dossiers', 'equipes', 'rapports', 'parametres', 'assurances', 'admin']
       };
     }
 
     if (userData) {
+      // Vérifier si le compte est expiré (pour les comptes de test)
+      if (userData.expirationDate) {
+        const now = new Date();
+        const expiration = new Date(userData.expirationDate);
+        if (now > expiration) {
+          return { success: false, error: 'Compte expiré' };
+        }
+      }
+
       setUser(userData);
       setIsAuthenticated(true);
       localStorage.setItem('user', JSON.stringify(userData));

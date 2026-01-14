@@ -40,51 +40,67 @@ const SimulationComponent = () => {
   const insuranceCompanies = [
     {
       id: 1,
-      name: 'SUNU Assurances',
-      logo: 'SA',
+      name: 'SANLAM',
+      logo: 'SL',
       rating: 4.7,
-      founded: '1995',
-      headquarters: 'Dakar, Sénégal'
+      founded: '1946',
+      headquarters: 'Ouagadougou, Burkina Faso'
     },
     {
       id: 2,
-      name: 'NSIA Assurances',
-      logo: 'NA',
+      name: 'SONAR',
+      logo: 'SO',
       rating: 4.5,
-      founded: '1985',
-      headquarters: 'Abidjan, Côte d\'Ivoire'
+      founded: '1976',
+      headquarters: 'Ouagadougou, Burkina Faso'
     },
     {
       id: 3,
-      name: 'Sahélienne Assurances',
-      logo: 'SA',
-      rating: 4.3,
-      founded: '1990',
+      name: 'CORIS Assurance',
+      logo: 'CA',
+      rating: 4.6,
+      founded: '1988',
       headquarters: 'Ouagadougou, Burkina Faso'
     },
     {
       id: 4,
-      name: 'Générale Assurances',
-      logo: 'GA',
+      name: 'UAB Assurance',
+      logo: 'UA',
       rating: 4.4,
-      founded: '1988',
-      headquarters: 'Paris, France'
+      founded: '1992',
+      headquarters: 'Ouagadougou, Burkina Faso'
     },
     {
       id: 5,
-      name: 'AXA Assurances',
-      logo: 'AA',
-      rating: 4.6,
+      name: 'RAYNAL Assurance',
+      logo: 'RA',
+      rating: 4.3,
       founded: '1985',
-      headquarters: 'Paris, France'
+      headquarters: 'Ouagadougou, Burkina Faso'
     },
     {
       id: 6,
-      name: 'Alliance Assurances',
-      logo: 'AA',
+      name: 'SUNU Assurances',
+      logo: 'SU',
+      rating: 4.7,
+      founded: '1995',
+      headquarters: 'Ouagadougou, Burkina Faso'
+    },
+    {
+      id: 7,
+      name: 'Jackson Assurance',
+      logo: 'JA',
       rating: 4.2,
-      founded: '1992',
-      headquarters: 'Lomé, Togo'
+      founded: '1990',
+      headquarters: 'Ouagadougou, Burkina Faso'
+    },
+    {
+      id: 8,
+      name: 'Yelen Assurance',
+      logo: 'YA',
+      rating: 4.5,
+      founded: '2001',
+      headquarters: 'Ouagadougou, Burkina Faso'
     }
   ];
 

@@ -530,38 +530,42 @@ const ProspectionForm = () => {
               type="button"
               onClick={handlePrevious}
               disabled={currentStep === 1}
-              className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex items-center px-4 py-2 rounded-lg font-medium ${
                 currentStep === 1
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-deep-navy hover:bg-gray-50'
+                  ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                  : 'text-white bg-gray-500 hover:bg-gray-600'
               }`}
             >
               <ArrowLeft size={18} className="mr-2" />
               Précédent
             </button>
 
-            {currentStep < steps.length ? (
+            <div className="flex space-x-3">
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={!isStepComplete(currentStep)}
-                className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isStepComplete(currentStep)
-                    ? 'bg-navy-blue text-white hover:bg-blue-900'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                disabled={currentStep >= steps.length}
+                className={`flex items-center px-6 py-2 rounded-lg font-medium ${
+                  currentStep >= steps.length
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : !isStepComplete(currentStep)
+                      ? 'bg-gray-300 text-gray-500 opacity-50 cursor-not-allowed'
+                      : 'bg-navy-blue text-white hover:bg-blue-800'
                 }`}
               >
                 Suivant
                 <ArrowRight size={18} className="ml-2" />
               </button>
-            ) : (
-              <button
-                type="submit"
-                className="bg-navy-blue text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-900 transition-colors"
-              >
-                Créer le prospect
-              </button>
-            )}
+
+              {currentStep === steps.length && (
+                <button
+                  type="submit"
+                  className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                >
+                  Créer le prospect
+                </button>
+              )}
+            </div>
           </div>
         </form>
       </div>

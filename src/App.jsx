@@ -12,6 +12,8 @@ import SignedContracts from './components/SignedContracts';
 import TeamManagement from './components/TeamManagement';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
+import AssurancePartenaires from './components/AssurancePartenaires';
+import AssuranceDetail from './components/AssuranceDetail';
 import { Skeleton } from './components/Skeleton';
 
 // Composant principal de l'application avec gestion des rôles
@@ -36,6 +38,7 @@ const AppContent = () => {
         <div className="p-6">
           <Skeleton type={currentPage === 'dashboard' ? 'dashboard' :
                         currentPage === 'prospection' ? 'prospection' :
+                        currentPage === 'assurances' ? 'default' :
                         'default'} />
         </div>
       );
@@ -63,6 +66,19 @@ const AppContent = () => {
         return <Reports />;
       case 'parametres':
         return <Settings />;
+      case 'assurances':
+        // Vérifier si l'URL contient une indication de page d'assurance détaillée
+        const hash = window.location.hash;
+        const isAssurancePage = hash.includes('page=assurances');
+
+        if (isAssurancePage) {
+          const urlParams = new URLSearchParams(hash.split('?')[1]);
+          const assuranceId = urlParams.get('id');
+          if (assuranceId) {
+            return <AssuranceDetail id={assuranceId} />;
+          }
+        }
+        return <AssurancePartenaires />;
       default:
         return <Dashboard />;
     }
@@ -74,6 +90,16 @@ const AppContent = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     timerRef.current = setTimeout(() => {
+      // Si la page est 'assurances', on met à jour l'URL pour indiquer la navigation
+      if (page === 'assurances') {
+        window.location.hash = '#/?page=assurances';
+      } else {
+        // Si on quitte la page d'assurance, on met à jour l'URL pour supprimer les paramètres d'assurance
+        const currentHash = window.location.hash;
+        if (currentHash.includes('page=assurances')) {
+          window.location.hash = `#/?page=${page}`;
+        }
+      }
       setCurrentPage(page);
       setIsLoading(false);
       timerRef.current = null;
